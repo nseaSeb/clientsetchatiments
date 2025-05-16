@@ -52,3 +52,7 @@ Pour exécuter le script
 ```
 
 Une fois fait vous devriez avoir dans le dossier ./dist une application exécutable
+
+## A propos
+
+![alt text](./resources/cc_image01.png 'Logo Title Text 1')
