@@ -33,7 +33,7 @@ def show_transformations_dialog(self, col_index):
 
         # Bouton Valider
         validate_btn = QPushButton("Valider")
-        validate_btn.clicked.connect(lambda: self.apply_transformation(col_index, dialog))
+        validate_btn.clicked.connect(lambda: apply_transformation(self,col_index, dialog))
         layout.addWidget(validate_btn)
 
         dialog.exec_()
@@ -48,13 +48,13 @@ def apply_transformation(self, col_index, dialog):
         transform = selected_transform.text()
 
         if transform == "Numérique":
-            self.transform_numeric(col_index)
+            transform_numeric(self, col_index)
         elif transform == "Limiter à N caractères":
             limit_column_length(self, col_index)
         elif transform == "Remplacer pays par code ISO":
-            self.transform_iso_code(col_index)
+            transform_iso_code(self,col_index)
         elif transform == "Adresse principale":
-            self.transform_address_primary(col_index)
+            transform_address_primary(self,col_index)
 
         dialog.close()
 
@@ -74,7 +74,7 @@ def limit_column_length(self, col_index):
 
         for val in [100, 128, 255, 510]:
             btn = QPushButton(str(val))
-            btn.clicked.connect(lambda _, v=val: self.apply_limit(col_index, v, dialog))
+            btn.clicked.connect(lambda _, v=val: apply_limit(self,col_index, v, dialog))
             btn_layout.addWidget(btn)
 
         layout.addWidget(btn_frame)
@@ -196,7 +196,7 @@ def transform_iso_code(self, col_index):
 
         # Bouton Valider
         validate_btn = QPushButton("Valider")
-        validate_btn.clicked.connect(lambda: self.apply_iso_transform(col_index, mapping, dialog))
+        validate_btn.clicked.connect(lambda: apply_iso_transform(self,col_index, mapping, dialog))
         layout.addWidget(validate_btn)
 
         dialog.exec_()
@@ -255,7 +255,7 @@ def search_replace_column(self, col_index):
 
         # Bouton Appliquer
         apply_btn = QPushButton("Remplacer")
-        apply_btn.clicked.connect(lambda: self.apply_search_replace(col_index, dialog))
+        apply_btn.clicked.connect(lambda: apply_search_replace(self,col_index, dialog))
         layout.addWidget(apply_btn)
 
         dialog.exec_()

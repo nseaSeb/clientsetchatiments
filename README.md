@@ -1,6 +1,6 @@
 # clientsetchatiments
 
-Manipulations de CSV / XLS en python (tableur avec console Python)
+POC de manipulations de CSV / XLS en python (tableur avec console Python)
 
 ## Pour installer et executer le code
 

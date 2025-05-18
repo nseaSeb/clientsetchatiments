@@ -130,11 +130,11 @@ class MainWindow(QMainWindow):
         menu.addAction(role_action)
 
         transform_action = QAction("Transformations", self)
-        transform_action.triggered.connect(lambda: self.show_transformations_dialog(col))
+        transform_action.triggered.connect(lambda: menu_transform.show_transformations_dialog(self,col))
         menu.addAction(transform_action)
 
         search_replace_action = QAction("Rechercher / Remplacer...", self)
-        search_replace_action.triggered.connect(lambda: self.search_replace_column(col))
+        search_replace_action.triggered.connect(lambda: menu_transform.search_replace_column(self,col))
         menu.addAction(search_replace_action)
 
         # Afficher le menu à la position du clic
@@ -293,11 +293,11 @@ class MainWindow(QMainWindow):
         if selected_col >= 0:
             # Action pour ajouter une colonne
             add_col_action = QAction("Ajouter une colonne à droite", self)
-            add_col_action.triggered.connect(lambda: self.add_column_right(selected_col if selected_col >= 0 else self.table.columnCount() - 1))
+            add_col_action.triggered.connect(lambda: menu_actions.add_column_right(self, selected_col if selected_col >= 0 else self.table.columnCount() - 1))
             menu.addAction(add_col_action)
 
             delete_action = QAction("Supprimer la colonne", self)
-            delete_action.triggered.connect(lambda: self.delete_column(selected_col))
+            delete_action.triggered.connect(lambda: menu_actions.delete_column(self,selected_col))
             menu.addAction(delete_action)
 
             limit_action = QAction("Limiter à N caractères...", self)
@@ -309,11 +309,11 @@ class MainWindow(QMainWindow):
             menu.addAction(role_action)
 
             transform_action = QAction("Transformations", self)
-            transform_action.triggered.connect(lambda: self.show_transformations_dialog(selected_col))
+            transform_action.triggered.connect(lambda: menu_transform.show_transformations_dialog(self,selected_col))
             menu.addAction(transform_action)
 
             search_replace_action = QAction("Rechercher / Remplacer...", self)
-            search_replace_action.triggered.connect(lambda: self.search_replace_column(selected_col))
+            search_replace_action.triggered.connect(lambda: menu_transform.search_replace_column(self,selected_col))
             menu.addAction(search_replace_action)
 
         menu.exec(self.table.viewport().mapToGlobal(pos))
