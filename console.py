@@ -59,11 +59,14 @@ class PythonConsole(QWidget):
             'print': self._print,
             'help': self.show_help,
             'QTableWidgetItem': QTableWidgetItem,
+            'show_headers': self.show_headers,
+            'sum_col': self.sum_column,
             'set_col': self.set_column_values,
             'rowcount': lambda: self.locals['table'].rowCount(),
             'colcount': lambda: self.locals['table'].columnCount(),
             'clear_col': lambda col: [self.locals['table'].setItem(r, col, QTableWidgetItem(""))
                                       for r in range(self.locals['table'].rowCount())],
+                                      
             'h': self.show_help,
             'show_doc': self.show_doc
         }
@@ -140,6 +143,8 @@ class PythonConsole(QWidget):
         ➤ set_col(col, func)          - Affecte les valeurs via une fonction (voir exemples) <br>
         ➤ clear_col(col)              - Vide toutes les cellules d'une colonne <br>
         ➤ get_cell()                  - Renvoit la valeur d'une cellule <br>
+        ➤ show_headers()              - Renvoit l'index et le nom des colonnes <br>
+        ➤ sum_col(col_index)                   - Renvoit la sommation de la colonne <br>
        
         <span style="color:#66d9ef;">Exemples d'analyse :</span><br>
         ➤ print(table.item(0, 0).text())               - Affiche la cellule [0, 0]<br>
@@ -179,6 +184,39 @@ class PythonConsole(QWidget):
             self._print("⚠️ Erreur : Référence au tableau non définie. Utilisez set_table_reference()")
             return False
         return True
+    def show_headers(self):
+        """Affiche les entêtes de colonnes et leur index"""
+        if not self._check_table_ready():
+            return
+
+        table = self.locals['table']
+        headers = []
+        for col in range(table.columnCount()):
+            item = table.horizontalHeaderItem(col)
+            header = item.text() if item else "(sans nom)"
+            headers.append(f"{col}: {header}")
+
+        result = "\n".join(headers)
+        self._print(result)
+    def sum_column(self, col_index):
+        """Fait la somme des valeurs numériques d'une colonne donnée."""
+        if not self._check_table_ready():
+            return 0
+
+        total = 0.0
+        errors = 0
+        for r in range(self.locals['table'].rowCount()):
+            text = self._safe_get_cell_text(r, col_index)
+            try:
+                total += float(text)
+            except ValueError:
+                errors += 1  # on ignore les erreurs de conversion
+
+        if errors:
+            self._print(f"⚠️ {errors} valeur(s) ignorée(s) (non numériques).")
+
+        self._print(f"Somme de la colonne {col_index} : {total}")
+        return total
 
     def _safe_get_cell(self, row, col):
         """Récupère une cellule de manière sécurisée"""
