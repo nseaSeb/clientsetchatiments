@@ -17,6 +17,7 @@ from console import PythonConsole
 import menu_actions
 import menu_transform
 import io_file
+from regex_transform import apply_regex_to_column,RegexTransformDialog
 
 class MainWindow(QMainWindow):
     print("test on the mount")
@@ -67,13 +68,18 @@ class MainWindow(QMainWindow):
             elif command.startswith("help_app"):
                 # Exemple d'aide spécifique à l'application
                 return """Commandes spéciales:
-    - show_stats : affiche des statistiques sur le tableau
-    - help_app : affiche cette aide
-    """
+                - show_stats : affiche des statistiques sur le tableau
+                - help_app : affiche cette aide
+                """
 
             # Commandes standard
-            self.status_label.setText(f"Commande exécutée : {command}")
-            return None  # Pas de retour spécial pour les commandes standard
+            # self.status_label.setText(f"Commande exécutée : {command}")
+            # return None  # Pas de retour spécial pour les commandes standard
+            # Commandes standard
+            if hasattr(self, "console"):
+                self.console._print(f'<span style="color:#66d9ef;">[Exécuté]</span> {command}')
+            return None
+
 
         except Exception as e:
             self.status_label.setText(f"Erreur : {str(e)}")
@@ -117,6 +123,11 @@ class MainWindow(QMainWindow):
         add_col_action = QAction("Ajouter une colonne à droite", self)
         add_col_action.triggered.connect(lambda: menu_actions.add_column_right(self, col if col >= 0 else self.table.columnCount() - 1))
         menu.addAction(add_col_action)
+
+        duplicate_action = QAction("Dupliquer la colonne", self)
+        duplicate_action.triggered.connect(lambda: menu_actions.duplicate_column(self,col))  # Pour show_header_context_menu
+        menu.addAction(duplicate_action)
+
         delete_action = QAction("Supprimer la colonne", self)
         delete_action.triggered.connect(lambda: menu_actions.delete_column(self, col))
         menu.addAction(delete_action)
@@ -136,6 +147,10 @@ class MainWindow(QMainWindow):
         search_replace_action = QAction("Rechercher / Remplacer...", self)
         search_replace_action.triggered.connect(lambda: menu_transform.search_replace_column(self,col))
         menu.addAction(search_replace_action)
+
+        regex_action = QAction("Transformer avec Regex...", self)
+        regex_action.triggered.connect(lambda: apply_regex_to_column(self, col))
+        menu.addAction(regex_action)
 
         # Afficher le menu à la position du clic
         header = self.table.horizontalHeader()
@@ -296,6 +311,10 @@ class MainWindow(QMainWindow):
             add_col_action.triggered.connect(lambda: menu_actions.add_column_right(self, selected_col if selected_col >= 0 else self.table.columnCount() - 1))
             menu.addAction(add_col_action)
 
+            duplicate_action = QAction("Dupliquer la colonne", self)
+            duplicate_action.triggered.connect(lambda: menu_actions.duplicate_column(self,selected_col))  # Pour show_header_context_menu
+            menu.addAction(duplicate_action)
+
             delete_action = QAction("Supprimer la colonne", self)
             delete_action.triggered.connect(lambda: menu_actions.delete_column(self,selected_col))
             menu.addAction(delete_action)
@@ -315,6 +334,10 @@ class MainWindow(QMainWindow):
             search_replace_action = QAction("Rechercher / Remplacer...", self)
             search_replace_action.triggered.connect(lambda: menu_transform.search_replace_column(self,selected_col))
             menu.addAction(search_replace_action)
+                    
+            regex_action = QAction("Transformer avec Regex...", self)
+            regex_action.triggered.connect(lambda: apply_regex_to_column(self, selected_col))
+            menu.addAction(regex_action)
 
         menu.exec(self.table.viewport().mapToGlobal(pos))
     
@@ -323,6 +346,8 @@ class MainWindow(QMainWindow):
 
 
 
+    def get_values(self):
+        return self.regex_input.text(), self.replacement_input.text(), self.mode_keep_match.isChecked()
 
     def set_column_role(self, col_index):
         dialog = QDialog(self)

@@ -52,6 +52,39 @@ def sort_numeric_column(self, col, order):
             self.table.removeRow(old_row)
         self.table.blockSignals(False)
 
+def duplicate_column(self, col_index):
+    if not self._validate_column_index(col_index):
+        return
+
+    insert_index = col_index + 1
+    self.table.insertColumn(insert_index)
+
+    # Copier les données
+    for row in range(self.table.rowCount()):
+        item = self.table.item(row, col_index)
+        new_item = QTableWidgetItem(item.text() if item else "")
+        self.table.setItem(row, insert_index, new_item)
+
+    # Copier l'en-tête
+    header_item = self.table.horizontalHeaderItem(col_index)
+    header_text = header_item.text() if header_item else f"Colonne {col_index + 1}"
+    self.table.setHorizontalHeaderItem(insert_index, QTableWidgetItem(header_text + " (copie)"))
+
+    # Copier le rôle si défini
+    if col_index in self.col_roles:
+        # Décaler les rôles existants à droite
+        new_roles = {}
+        for key, value in self.col_roles.items():
+            if key >= insert_index:
+                new_roles[key + 1] = value
+            else:
+                new_roles[key] = value
+        new_roles[insert_index] = self.col_roles[col_index]
+        self.col_roles = new_roles
+
+    self.show_message(f"Colonne {col_index + 1} dupliquée en colonne {insert_index + 1}.")
+
+
 def add_column_right(self, col_index):
         """Ajoute une nouvelle colonne à droite de la colonne spécifiée"""
 
