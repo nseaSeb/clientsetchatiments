@@ -16,7 +16,7 @@ Une fois fait nous nous rendons dans le dossier du projet et nous installons l'e
 ```
 cd clientsetchatiments
 
-py -m venv .venv
+python3 -m venv .venv
 
 source .venv/bin/activate
 ```
@@ -26,7 +26,8 @@ Installation des dépendances
 ```
 pip install openpyxl
 pip install PySide6
-
+pip3 install 
+pip3 install numpy  
 ```
 
 Pour executer l'application

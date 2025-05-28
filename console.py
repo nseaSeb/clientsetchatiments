@@ -44,7 +44,7 @@ class PythonConsole(QWidget):
         input_layout.setContentsMargins(0, 0, 0, 0)
 
         self.input = QPlainTextEdit()
-        self.input.setPlaceholderText("Tapez du code Python ici... shift + enter pour exécuter")
+        self.input.setPlaceholderText("Tapez du code Python ici... ctrl + enter pour exécuter")
         self.input.setMinimumHeight(40)
         self.input.setStyleSheet("""
             QPlainTextEdit {
@@ -97,13 +97,11 @@ class PythonConsole(QWidget):
 
     def eventFilter(self, source, event):
         if source == self.input and event.type() == QEvent.KeyPress:
-            if (event.key() in (Qt.Key_Return, Qt.Key_Enter)) and (
-                event.modifiers() & Qt.ControlModifier or event.modifiers() & Qt.ShiftModifier
-            ):
+            if (event.key() in (Qt.Key_Return, Qt.Key_Enter)) and event.modifiers() & Qt.ControlModifier:
                 self.execute_code()
                 return True  # événement traité
-
         return super().eventFilter(source, event)
+
 
 
     def setup_python_env(self):
@@ -198,7 +196,7 @@ class PythonConsole(QWidget):
         ╚══════╝<br>
         </span>
         <br>
-        <span style="color:#66d9ef;">shift + enter pour exécuter</span>
+        <span style="color:#66d9ef;">ctrl + enter pour exécuter (cmd + enter sous mac)</span>
         <br>
         <span style="color:#66d9ef;">Objets disponibles :</span>
         <br>

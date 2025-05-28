@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QTableWidget,
                               QTableWidgetItem, QMenuBar, QMenu, QFileDialog, QMessageBox,
                               QInputDialog, QLabel, QPushButton, QDialog, QRadioButton,QDockWidget,
-                              QButtonGroup, QLineEdit, QCheckBox, QFrame)
+                              QButtonGroup, QLineEdit, QCheckBox, QFrame,  QCheckBox, QFrame, QHBoxLayout)
 import utils
 # Generique actions 
 def sort_table(self, logical_index, order):
@@ -181,3 +181,36 @@ def _show_success_message(self, col_index):
 
         self.statusBar().showMessage(f"Colonne {col_index + 1} supprimée avec succès", 3000)
 
+def rename_column(self, col_index):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Renommer la colonne")
+        dialog.setMinimumWidth(300)  # largeur minimale ici
+
+        layout = QVBoxLayout(dialog)
+        current_name = self.table.horizontalHeaderItem(col_index).text() if self.table.horizontalHeaderItem(col_index) else ""
+
+        label = QLabel(f"Nom actuel : {current_name}")
+        layout.addWidget(label)
+
+        input_field = QLineEdit()
+        input_field.setText(current_name)
+        layout.addWidget(input_field)
+
+        buttons_layout = QHBoxLayout()
+        ok_button = QPushButton("Valider")
+        cancel_button = QPushButton("Annuler")
+        buttons_layout.addWidget(ok_button)
+        buttons_layout.addWidget(cancel_button)
+        layout.addLayout(buttons_layout)
+
+        def validate():
+            new_name = input_field.text().strip()
+            if new_name:
+                self.table.setHorizontalHeaderItem(col_index, QTableWidgetItem(new_name))
+                self.show_message(f"Colonne {col_index + 1} renommée en '{new_name}'")
+                dialog.accept()
+
+        ok_button.clicked.connect(validate)
+        cancel_button.clicked.connect(dialog.reject)
+
+        dialog.exec()

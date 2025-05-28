@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QTableWidget,
                               QTableWidgetItem, QMenuBar, QMenu, QFileDialog, QMessageBox,
                               QInputDialog, QLabel, QPushButton, QDialog, QRadioButton,QDockWidget,
-                              QButtonGroup, QLineEdit, QCheckBox, QFrame)
+                              QButtonGroup, QLineEdit, QCheckBox, QFrame, QHBoxLayout)
 from PySide6.QtGui import QAction, QKeySequence
 import version
 import utils
@@ -119,6 +119,10 @@ class MainWindow(QMainWindow):
         col = self.table.horizontalHeader().logicalIndexAt(pos)
         if col < 0:
             return
+        rename_action = QAction("Renommer la colonne...", self)
+        rename_action.triggered.connect(lambda: menu_actions.rename_column(self,col))
+        menu.addAction(rename_action)
+
         # Action pour ajouter une colonne (disponible même sans colonne sélectionnée)
         add_col_action = QAction("Ajouter une colonne à droite", self)
         add_col_action.triggered.connect(lambda: menu_actions.add_column_right(self, col if col >= 0 else self.table.columnCount() - 1))
@@ -306,6 +310,10 @@ class MainWindow(QMainWindow):
 
         selected_col = self.table.currentColumn()
         if selected_col >= 0:
+            rename_action = QAction("Renommer la colonne...", self)
+            rename_action.triggered.connect(lambda: menu_actions.rename_column(self,selected_col))
+            menu.addAction(rename_action)
+
             # Action pour ajouter une colonne
             add_col_action = QAction("Ajouter une colonne à droite", self)
             add_col_action.triggered.connect(lambda: menu_actions.add_column_right(self, selected_col if selected_col >= 0 else self.table.columnCount() - 1))
